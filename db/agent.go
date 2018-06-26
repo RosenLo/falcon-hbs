@@ -52,3 +52,45 @@ func UpdateAgent(agentInfo *model.AgentUpdateInfo) {
 	}
 
 }
+
+func UpdateCMDBGroup(agentInfo *model.AgentUpdateInfo) {
+	cmdb_group := g.Config().CMDBGroup
+	var host_id int64 = -1
+	var group_id int64 = -1
+
+	err := DB.QueryRow("SELECT grp_id FROM grp WHERE grp_name = ?", cmdb_group).Scan(&group_id)
+	if err != nil {
+		log.Println("get group name fail", err)
+		return
+	}
+	if group_id <= 0 {
+		log.Println("group not found, gourp: ", cmdb_group)
+		return
+	}
+
+	err = DB.QueryRow("SELECT id FROM host WHERE hostname = ?", agentInfo.ReportRequest.Hostname).Scan(&host_id)
+	if err != nil {
+		log.Println("get group name fail", err)
+		return
+	}
+	if group_id <= 0 {
+		log.Println("host not found, host: ", cmdb_group)
+		return
+	}
+
+	var id int64 = -1
+	sql := fmt.Sprintf("SELECT grp_id FROM grp_host WHERE grp_id = %d AND host_id = %d", group_id, host_id)
+	err = DB.QueryRow(sql).Scan(&id)
+	if err != nil {
+		log.Println("get host group empty, sql", sql)
+	}
+	if id != -1 {
+		return
+	}
+
+	sql = fmt.Sprintf("INSERT INTO grp_host(grp_id, host_id) VALUES (%d, %d)", group_id, host_id)
+	_, err = DB.Exec(sql)
+	if err != nil {
+		log.Println("exec", sql, "fail", err)
+	}
+}

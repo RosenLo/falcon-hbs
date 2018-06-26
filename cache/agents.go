@@ -50,6 +50,7 @@ func (this *SafeAgents) Put(req *model.AgentReportRequest) {
 		agentInfo.ReportRequest.PluginVersion != req.PluginVersion {
 
 		db.UpdateAgent(val)
+		db.UpdateCMDBGroup(val)
 		this.Lock()
 		this.M[req.Hostname] = val
 		this.Unlock()
