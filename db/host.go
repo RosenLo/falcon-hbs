@@ -16,9 +16,10 @@ package db
 
 import (
 	"fmt"
-	"github.com/open-falcon/falcon-plus/common/model"
 	"log"
 	"time"
+
+	"github.com/open-falcon/falcon-plus/common/model"
 )
 
 func QueryHosts() (map[string]int, error) {
@@ -53,7 +54,7 @@ func QueryHosts() (map[string]int, error) {
 func QueryMonitoredHosts() (map[int]*model.Host, error) {
 	hosts := make(map[int]*model.Host)
 	now := time.Now().Unix()
-	sql := fmt.Sprintf("select id, hostname from host where maintain_begin > %d or maintain_end < %d", now, now)
+	sql := fmt.Sprintf("select id, hostname, ip from host where maintain_begin > %d or maintain_end < %d", now, now)
 	rows, err := DB.Query(sql)
 	if err != nil {
 		log.Println("ERROR:", err)
@@ -63,7 +64,7 @@ func QueryMonitoredHosts() (map[int]*model.Host, error) {
 	defer rows.Close()
 	for rows.Next() {
 		t := model.Host{}
-		err = rows.Scan(&t.Id, &t.Name)
+		err = rows.Scan(&t.Id, &t.Name, &t.Ip)
 		if err != nil {
 			log.Println("WARN:", err)
 			continue
