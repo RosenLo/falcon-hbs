@@ -16,6 +16,8 @@ package rpc
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/open-falcon/falcon-plus/common/model"
 	"github.com/open-falcon/falcon-plus/common/utils"
 	"github.com/open-falcon/falcon-plus/modules/hbs/cache"
@@ -24,6 +26,47 @@ import (
 func (t *Hbs) GetExpressions(req model.NullRpcRequest, reply *model.ExpressionResponse) error {
 	reply.Expressions = cache.ExpressionCache.Get()
 	return nil
+}
+
+func (t *Hbs) GetHostStrategies(req model.HostStrategyRequest, reply *model.HostStrategy) (err error) {
+	log.Println("get rpc call.")
+	// 一个机器ID对应多个模板ID
+	hidTids := cache.HostTemplateIds.GetMap()
+	sz := len(hidTids)
+	if sz == 0 {
+		return
+	}
+
+	tpls := cache.TemplateCache.GetMap()
+	if len(tpls) == 0 {
+		log.Println("template is empty.")
+		return
+	}
+
+	strategies := cache.Strategies.GetMap()
+	if len(strategies) == 0 {
+		log.Println("strategies is empty.")
+		return
+	}
+
+	// 做个索引，给一个tplId，可以很方便的找到对应了哪些Strategy
+	tpl2Strategies := Tpl2Strategies(strategies)
+
+	tplIds, exists := hidTids[req.HostId]
+	ss := CalcInheritStrategies(tpls, tplIds, tpl2Strategies)
+
+	if !exists {
+		return
+	}
+
+	if len(ss) <= 0 {
+		return
+	}
+
+	reply.Strategies = ss
+
+	log.Println("rpc call done.")
+	return
 }
 
 func (t *Hbs) GetStrategies(req model.NullRpcRequest, reply *model.StrategiesResponse) error {
@@ -161,7 +204,7 @@ func CalcInheritStrategies(allTpls map[int]*model.Template, tids []int, tpl2Stra
 
 			if stras, ok := tpl2Strategies[tid]; ok {
 				for _, s := range stras {
-					uuid := fmt.Sprintf("metric:%s/tags:%v", s.Metric, utils.SortedTags(s.Tags))
+					uuid := fmt.Sprintf("metric:%s/tags:%v/priority:%d", s.Metric, utils.SortedTags(s.Tags), s.Priority)
 					if _, ok2 := the_tid_stras[uuid]; ok2 {
 						the_tid_stras[uuid] = append(the_tid_stras[uuid], s)
 					} else {
