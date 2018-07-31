@@ -26,7 +26,7 @@ import (
 // 1.1.0: remove Checksum when query plugins
 const (
 	OFFICIAL_VERSION = "1.1.0"
-	DADA_VERSION     = "1.0.1"
+	DADA_VERSION     = "1.1.0"
 	VERSION          = DADA_VERSION
 )
 
