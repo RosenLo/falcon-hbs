@@ -35,6 +35,7 @@ type GlobalConfig struct {
 	MaxConns  int         `json:"maxConns"`
 	MaxIdle   int         `json:"maxIdle"`
 	Listen    string      `json:"listen"`
+	Interval  int64       `json:"interval"`
 	Trustable []string    `json:"trustable"`
 	Http      *HttpConfig `json:"http"`
 }

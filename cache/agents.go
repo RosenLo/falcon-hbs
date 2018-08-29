@@ -25,6 +25,7 @@ import (
 
 	"github.com/open-falcon/falcon-plus/common/model"
 	"github.com/open-falcon/falcon-plus/modules/hbs/db"
+	"github.com/open-falcon/falcon-plus/modules/hbs/g"
 )
 
 type SafeAgents struct {
@@ -44,30 +45,30 @@ func (this *SafeAgents) Put(req *model.AgentReportRequest) {
 		ReportRequest: req,
 	}
 
-	if agentInfo, exists := this.Get(req.Hostname); !exists ||
+	if agentInfo, exists := this.Get(req.IP); !exists ||
 		agentInfo.ReportRequest.AgentVersion != req.AgentVersion ||
-		agentInfo.ReportRequest.IP != req.IP ||
+		agentInfo.ReportRequest.Hostname != req.Hostname ||
 		agentInfo.ReportRequest.PluginVersion != req.PluginVersion {
 
 		db.UpdateAgent(val)
 		db.UpdateCMDBGroup(val)
 		this.Lock()
-		this.M[req.Hostname] = val
+		this.M[req.IP] = val
 		this.Unlock()
 	}
 }
 
-func (this *SafeAgents) Get(hostname string) (*model.AgentUpdateInfo, bool) {
+func (this *SafeAgents) Get(ip string) (*model.AgentUpdateInfo, bool) {
 	this.RLock()
 	defer this.RUnlock()
-	val, exists := this.M[hostname]
+	val, exists := this.M[ip]
 	return val, exists
 }
 
-func (this *SafeAgents) Delete(hostname string) {
+func (this *SafeAgents) Delete(ip string) {
 	this.Lock()
 	defer this.Unlock()
-	delete(this.M, hostname)
+	delete(this.M, ip)
 }
 
 func (this *SafeAgents) Keys() []string {
@@ -76,11 +77,17 @@ func (this *SafeAgents) Keys() []string {
 	count := len(this.M)
 	keys := make([]string, count)
 	i := 0
-	for hostname := range this.M {
-		keys[i] = hostname
+	for ip := range this.M {
+		keys[i] = ip
 		i++
 	}
 	return keys
+}
+
+func (this *SafeAgents) GetMap() map[string]*model.AgentUpdateInfo {
+	this.RLock()
+	defer this.RUnlock()
+	return this.M
 }
 
 func DeleteStaleAgents() {
@@ -92,8 +99,8 @@ func DeleteStaleAgents() {
 }
 
 func deleteStaleAgents() {
-	// 一天都没有心跳的Agent，从内存中干掉
-	before := time.Now().Unix() - 3600*24
+	// 一个小时都没有心跳的Agent，从内存中干掉
+	before := time.Now().Unix() - g.Config().Interval
 	keys := Agents.Keys()
 	count := len(keys)
 	if count == 0 {
@@ -103,8 +110,8 @@ func deleteStaleAgents() {
 	for i := 0; i < count; i++ {
 		curr, _ := Agents.Get(keys[i])
 		if curr.LastUpdate < before {
-			Agents.Delete(curr.ReportRequest.Hostname)
-			log.Println("delete the host from cache, host: ", curr.ReportRequest.Hostname)
+			Agents.Delete(curr.ReportRequest.IP)
+			log.Println("delete the host from cache, host: ", curr.ReportRequest.IP)
 		}
 	}
 }

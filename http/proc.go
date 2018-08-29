@@ -16,9 +16,10 @@ package http
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/open-falcon/falcon-plus/common/model"
 	"github.com/open-falcon/falcon-plus/modules/hbs/cache"
-	"net/http"
 )
 
 func configProcRoutes() {
@@ -27,7 +28,7 @@ func configProcRoutes() {
 	})
 
 	http.HandleFunc("/agents", func(w http.ResponseWriter, r *http.Request) {
-		RenderDataJson(w, cache.Agents.Keys())
+		RenderDataJson(w, cache.Agents.GetMap())
 	})
 
 	http.HandleFunc("/hosts", func(w http.ResponseWriter, r *http.Request) {
