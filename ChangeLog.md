@@ -1,3 +1,9 @@
+
+## 1.2.0 (2018-08-29)
+
+### Changed
+- change the unique key from hostname to ip f8414d4b
+
 ## 1.1.0 (2018-07-30)
 
 ### Add
