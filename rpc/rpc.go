@@ -21,7 +21,7 @@ import (
 	"net/rpc/jsonrpc"
 	"time"
 
-	"github.com/open-falcon/falcon-plus/modules/hbs/g"
+	"github.com/RosenLo/falcon-hbs/g"
 )
 
 type Hbs int

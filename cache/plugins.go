@@ -15,9 +15,10 @@
 package cache
 
 import (
-	"github.com/open-falcon/falcon-plus/modules/hbs/db"
 	"sort"
 	"sync"
+
+	"github.com/RosenLo/falcon-hbs/db"
 )
 
 // 一个HostGroup可以绑定多个Plugin

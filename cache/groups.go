@@ -15,8 +15,9 @@
 package cache
 
 import (
-	"github.com/open-falcon/falcon-plus/modules/hbs/db"
 	"sync"
+
+	"github.com/RosenLo/falcon-hbs/db"
 )
 
 // 一个机器可能在多个group下，做一个map缓存hostid与groupid的对应关系

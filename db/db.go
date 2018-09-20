@@ -16,9 +16,10 @@ package db
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/open-falcon/falcon-plus/modules/hbs/g"
 	"log"
+
+	"github.com/RosenLo/falcon-hbs/g"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var DB *sql.DB

@@ -17,14 +17,15 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/open-falcon/falcon-plus/modules/hbs/cache"
-	"github.com/open-falcon/falcon-plus/modules/hbs/db"
-	"github.com/open-falcon/falcon-plus/modules/hbs/g"
-	"github.com/open-falcon/falcon-plus/modules/hbs/http"
-	"github.com/open-falcon/falcon-plus/modules/hbs/rpc"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/RosenLo/falcon-hbs/cache"
+	"github.com/RosenLo/falcon-hbs/db"
+	"github.com/RosenLo/falcon-hbs/g"
+	"github.com/RosenLo/falcon-hbs/http"
+	"github.com/RosenLo/falcon-hbs/rpc"
 )
 
 func main() {

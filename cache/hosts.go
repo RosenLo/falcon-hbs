@@ -17,8 +17,8 @@ package cache
 import (
 	"sync"
 
+	"github.com/RosenLo/falcon-hbs/db"
 	"github.com/open-falcon/falcon-plus/common/model"
-	"github.com/open-falcon/falcon-plus/modules/hbs/db"
 )
 
 // 每次心跳的时候agent把hostname汇报上来，经常要知道这个机器的hostid，把此信息缓存

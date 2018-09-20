@@ -16,13 +16,14 @@ package rpc
 
 import (
 	"bytes"
-	"github.com/open-falcon/falcon-plus/common/model"
-	"github.com/open-falcon/falcon-plus/common/utils"
-	"github.com/open-falcon/falcon-plus/modules/hbs/cache"
-	"github.com/open-falcon/falcon-plus/modules/hbs/g"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/RosenLo/falcon-hbs/cache"
+	"github.com/RosenLo/falcon-hbs/g"
+	"github.com/open-falcon/falcon-plus/common/model"
+	"github.com/open-falcon/falcon-plus/common/utils"
 )
 
 func (t *Agent) MinePlugins(args model.AgentHeartbeatRequest, reply *model.AgentPluginsResponse) error {
