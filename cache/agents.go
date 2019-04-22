@@ -58,10 +58,10 @@ func (this *SafeAgents) Put(req *model.AgentReportRequest) {
 
 		db.UpdateAgent(val)
 		db.UpdateCMDBGroup(val)
-		this.Lock()
-		this.M[req.IP] = val
-		this.Unlock()
 	}
+	this.Lock()
+	this.M[req.IP] = val
+	this.Unlock()
 }
 
 func (this *SafeAgents) Get(ip string) (*model.AgentUpdateInfo, bool) {
