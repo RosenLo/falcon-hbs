@@ -34,7 +34,11 @@ func configProcRoutes() {
 	})
 
 	http.HandleFunc("/agents", func(w http.ResponseWriter, r *http.Request) {
-		RenderDataJson(w, cache.Agents.GetMap())
+		m := make(map[string]interface{})
+		data := cache.Agents.GetMap()
+		m["data"] = data
+		m["total"] = len(data)
+		RenderDataJson(w, m)
 	})
 
 	http.HandleFunc("/hosts", func(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +46,10 @@ func configProcRoutes() {
 		for k, v := range cache.MonitoredHosts.Get() {
 			data[fmt.Sprint(k)] = v
 		}
-		RenderDataJson(w, data)
+		m := make(map[string]interface{})
+		m["data"] = data
+		m["total"] = len(data)
+		RenderDataJson(w, m)
 	})
 
 	http.HandleFunc("/strategies", func(w http.ResponseWriter, r *http.Request) {
