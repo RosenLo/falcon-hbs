@@ -1,4 +1,4 @@
-// Copyright 2018 RosenLo
+// Copyright 2018-2019 RosenLo
 
 // Copyright 2017 Xiaomi, Inc.
 //
@@ -33,6 +33,10 @@ type HttpConfig struct {
 	Listen  string `json:"listen"`
 }
 
+type CMDBConfig struct {
+	Url string `json:"url"`
+}
+
 type GlobalConfig struct {
 	Debug     bool        `json:"debug"`
 	Hosts     string      `json:"hosts"`
@@ -44,6 +48,7 @@ type GlobalConfig struct {
 	Interval  int64       `json:"interval"`
 	Trustable []string    `json:"trustable"`
 	Http      *HttpConfig `json:"http"`
+	CMDB      *CMDBConfig `json:"cmdb"`
 }
 
 var (

@@ -1,4 +1,4 @@
-// Copyright 2018 RosenLo
+// Copyright 2018-2019 RosenLo
 
 // Copyright 2017 Xiaomi, Inc.
 //
@@ -31,6 +31,7 @@ import (
 
 	"github.com/RosenLo/falcon-hbs/db"
 	"github.com/RosenLo/falcon-hbs/g"
+	"github.com/RosenLo/falcon-hbs/util/cmdb"
 	"github.com/open-falcon/falcon-plus/common/model"
 )
 
@@ -58,6 +59,9 @@ func (this *SafeAgents) Put(req *model.AgentReportRequest) {
 
 		db.UpdateAgent(val)
 		db.UpdateCMDBGroup(val)
+		if val.ReportRequest.HostInfo != nil {
+			go cmdb.ReportStatus(val.ReportRequest.HostInfo)
+		}
 	}
 	this.Lock()
 	this.M[req.IP] = val
