@@ -57,15 +57,15 @@ func (this *SafeAgents) Put(req *model.AgentReportRequest) {
 		agentInfo.ReportRequest.Hostname != req.Hostname ||
 		agentInfo.ReportRequest.PluginVersion != req.PluginVersion {
 
-		db.UpdateAgent(val)
-		db.UpdateCMDBGroup(val)
+		go db.UpdateAgent(val)
+		go db.UpdateCMDBGroup(val)
 		if val.ReportRequest.HostInfo != nil {
 			go cmdb.ReportStatus(val.ReportRequest.HostInfo)
 		}
 	}
 	this.Lock()
+	defer this.Unlock()
 	this.M[req.IP] = val
-	this.Unlock()
 }
 
 func (this *SafeAgents) Get(ip string) (*model.AgentUpdateInfo, bool) {
