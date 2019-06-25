@@ -30,6 +30,7 @@ func (s *Service) ReportStatus(hostInfo map[string]interface{}) {
 	if err := common.ToJSON(data, &ret); err != nil {
 		log.Println(err)
 	}
+	log.Println(ret)
 }
 
 func NewService() *Service {

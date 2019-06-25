@@ -109,7 +109,7 @@ func DeleteStaleAgents() {
 }
 
 func deleteStaleAgents() {
-	// 一个小时都没有心跳的Agent，从内存中干掉
+	// 十分钟都没有心跳的Agent，从内存中干掉
 	before := time.Now().Unix() - g.Config().Interval
 	keys := Agents.Keys()
 	count := len(keys)
@@ -120,6 +120,8 @@ func deleteStaleAgents() {
 	for i := 0; i < count; i++ {
 		curr, _ := Agents.Get(keys[i])
 		if curr.LastUpdate < before {
+			curr.ReportRequest.HostInfo["online"] = false
+			go cmdb.ReportStatus(curr.ReportRequest.HostInfo)
 			Agents.Delete(curr.ReportRequest.IP)
 			log.Println("delete the host from cache, host: ", curr.ReportRequest.IP)
 		}
