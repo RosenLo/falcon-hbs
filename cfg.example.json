@@ -10,5 +10,9 @@
     "http": {
         "enabled": true,
         "listen": "0.0.0.0:6031"
-    }
+    },
+    "cmdb": {
+        "url": "http://0.0.0.0:8081"
+    },
+    "agent_file": "agents.json"
 }

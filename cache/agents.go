@@ -25,6 +25,7 @@ package cache
 // 提供http接口查询机器信息，排查重名机器的时候比较有用
 
 import (
+	"encoding/json"
 	"log"
 	"sync"
 	"time"
@@ -32,6 +33,7 @@ import (
 	"github.com/RosenLo/falcon-hbs/db"
 	"github.com/RosenLo/falcon-hbs/g"
 	"github.com/RosenLo/falcon-hbs/util/cmdb"
+	"github.com/RosenLo/toolkits/file"
 	"github.com/open-falcon/falcon-plus/common/model"
 )
 
@@ -120,10 +122,42 @@ func deleteStaleAgents() {
 	for i := 0; i < count; i++ {
 		curr, _ := Agents.Get(keys[i])
 		if curr.LastUpdate < before {
-			curr.ReportRequest.HostInfo["online"] = false
-			go cmdb.ReportStatus(curr.ReportRequest.HostInfo)
+			if curr.ReportRequest.HostInfo != nil {
+				curr.ReportRequest.HostInfo["online"] = false
+				go cmdb.ReportStatus(curr.ReportRequest.HostInfo)
+			}
 			Agents.Delete(curr.ReportRequest.IP)
 			log.Println("delete the host from cache, host: ", curr.ReportRequest.IP)
 		}
 	}
+}
+
+func SaveAgentsToFile() {
+	data, err := json.Marshal(Agents.GetMap())
+	if err != nil {
+		log.Printf("[ERROR] json marshal fail: %v.", err)
+		return
+	}
+	err = file.WriteFile(g.Config().AgentFile, data, 0755)
+	if err != nil {
+		log.Printf("[ERROR] write file fail: %v.", err)
+		return
+	}
+	log.Println("write agents file:", g.Config().AgentFile, "successfully")
+}
+
+func ReadAgentsFromFile() {
+	Agents.Lock()
+	defer Agents.Unlock()
+	fdata, err := file.ReadFile(g.Config().AgentFile)
+	if err != nil {
+		log.Printf("[ERROR] read file fail: %v.", err)
+		return
+	}
+	err = json.Unmarshal(fdata, &Agents.M)
+	if err != nil {
+		log.Printf("[ERROR] json unmarshal fail: %v.", err)
+		return
+	}
+	log.Println("read agents file:", g.Config().AgentFile, "successfully")
 }

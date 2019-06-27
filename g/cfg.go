@@ -49,6 +49,7 @@ type GlobalConfig struct {
 	Trustable []string    `json:"trustable"`
 	Http      *HttpConfig `json:"http"`
 	CMDB      *CMDBConfig `json:"cmdb"`
+	AgentFile string      `json:"agent_file"`
 }
 
 var (

@@ -42,7 +42,6 @@ func main() {
 
 	db.Init()
 	cache.Init()
-
 	go cache.DeleteStaleAgents()
 
 	go http.Start()
@@ -54,6 +53,7 @@ func main() {
 		<-sigs
 		fmt.Println()
 		db.DB.Close()
+		cache.SaveAgentsToFile()
 		os.Exit(0)
 	}()
 

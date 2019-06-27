@@ -18,6 +18,7 @@ func (s *Service) ReportStatus(hostInfo map[string]interface{}) {
 	url := fmt.Sprintf("%s/api/v3/host/add/agent", s.endpoint)
 	headers := map[string]string{
 		"HTTP_BLUEKING_SUPPLIER_ID": "0",
+		"BK_User":                   "admin",
 	}
 	body := map[string]interface{}{
 		"host_info": hostInfo,

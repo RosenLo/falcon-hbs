@@ -49,6 +49,9 @@ func Init() {
 	log.Println("#9 MonitoredHosts...")
 	MonitoredHosts.Init()
 
+	log.Println("#10 ReadAgentsFromFile...")
+	ReadAgentsFromFile()
+
 	log.Println("cache done")
 
 	go LoopInit()
