@@ -35,12 +35,11 @@ func configProcRoutes() {
 
 	http.HandleFunc("/agents", func(w http.ResponseWriter, r *http.Request) {
 		m := make(map[string]interface{})
-		data := make(map[string]interface{})
-		for k, v := range cache.Agents.GetMap() {
-			data[k] = v
-		}
-		m["data"] = data
-		m["total"] = len(data)
+		cache.Agents.Lock()
+		defer cache.Agents.Unlock()
+
+		m["data"] = cache.Agents.M
+		m["total"] = len(cache.Agents.M)
 		RenderDataJson(w, m)
 	})
 
