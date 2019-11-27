@@ -122,10 +122,6 @@ func deleteStaleAgents() {
 	for i := 0; i < count; i++ {
 		curr, _ := Agents.Get(keys[i])
 		if curr.LastUpdate < before {
-			if curr.ReportRequest.HostInfo != nil {
-				curr.ReportRequest.HostInfo["online"] = false
-				go cmdb.ReportStatus(curr.ReportRequest.HostInfo)
-			}
 			Agents.Delete(curr.ReportRequest.IP)
 			log.Println("delete the host from cache, host: ", curr.ReportRequest.IP)
 		}
