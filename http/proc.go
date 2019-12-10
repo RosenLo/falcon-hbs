@@ -35,12 +35,12 @@ func configProcRoutes() {
 
 	http.HandleFunc("/agents", func(w http.ResponseWriter, r *http.Request) {
 		m := make(map[string]interface{})
-		cache.Agents.Lock()
-		defer cache.Agents.Unlock()
+		cache.Agents.RLock()
 
 		m["data"] = cache.Agents.M
 		m["total"] = len(cache.Agents.M)
 		RenderDataJson(w, m)
+		cache.Agents.RUnlock()
 	})
 
 	http.HandleFunc("/hosts", func(w http.ResponseWriter, r *http.Request) {

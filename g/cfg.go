@@ -38,18 +38,19 @@ type CMDBConfig struct {
 }
 
 type GlobalConfig struct {
-	Debug     bool        `json:"debug"`
-	Hosts     string      `json:"hosts"`
-	Database  string      `json:"database"`
-	CMDBGroup string      `json:"cmdbGroup"`
-	MaxConns  int         `json:"maxConns"`
-	MaxIdle   int         `json:"maxIdle"`
-	Listen    string      `json:"listen"`
-	Interval  int64       `json:"interval"`
-	Trustable []string    `json:"trustable"`
-	Http      *HttpConfig `json:"http"`
-	CMDB      *CMDBConfig `json:"cmdb"`
-	AgentFile string      `json:"agent_file"`
+	Debug        bool        `json:"debug"`
+	Hosts        string      `json:"hosts"`
+	Database     string      `json:"database"`
+	CMDBGroup    string      `json:"cmdbGroup"`
+	MaxConns     int         `json:"maxConns"`
+	MaxIdle      int         `json:"maxIdle"`
+	Listen       string      `json:"listen"`
+	Interval     int64       `json:"interval"`
+	Trustable    []string    `json:"trustable"`
+	Http         *HttpConfig `json:"http"`
+	CMDB         *CMDBConfig `json:"cmdb"`
+	AgentFile    string      `json:"agent_file"`
+	CMDBInterval int64       `json:"cmdb_interval"`
 }
 
 var (

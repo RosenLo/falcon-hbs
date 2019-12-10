@@ -43,6 +43,7 @@ func main() {
 	db.Init()
 	cache.Init()
 	go cache.DeleteStaleAgents()
+	go cache.SyncCMDB()
 
 	go http.Start()
 	go rpc.Start()

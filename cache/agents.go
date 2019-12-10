@@ -1,7 +1,6 @@
 // Copyright 2018-2019 RosenLo
 
 // Copyright 2017 Xiaomi, Inc.
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -61,9 +60,6 @@ func (this *SafeAgents) Put(req *model.AgentReportRequest) {
 
 		go db.UpdateAgent(val)
 		go db.UpdateCMDBGroup(val)
-		if val.ReportRequest.HostInfo != nil {
-			go cmdb.ReportStatus(val.ReportRequest.HostInfo)
-		}
 	}
 	this.Lock()
 	defer this.Unlock()
@@ -124,6 +120,32 @@ func deleteStaleAgents() {
 		if curr.LastUpdate < before {
 			Agents.Delete(curr.ReportRequest.IP)
 			log.Println("delete the host from cache, host: ", curr.ReportRequest.IP)
+		}
+	}
+}
+
+func SyncCMDB() {
+	duration := time.Minute * time.Duration(g.Config().CMDBInterval)
+	for {
+		time.Sleep(duration)
+		syncCMDB()
+	}
+}
+
+func syncCMDB() {
+	keys := Agents.Keys()
+	count := len(keys)
+	if count == 0 {
+		return
+	}
+	for i := 0; i < count; i++ {
+		elem, _ := Agents.Get(keys[i])
+		if elem.ReportRequest.HostInfo != nil {
+			elem.ReportRequest.HostInfo["bk_host_name"] = elem.ReportRequest.Hostname
+			cmdb.ReportStatus(elem.ReportRequest.HostInfo)
+
+			log.Println("sync the host from cache, host: ", elem.ReportRequest.Hostname)
+			time.Sleep(200 * time.Millisecond)
 		}
 	}
 }
