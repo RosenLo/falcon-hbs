@@ -48,6 +48,10 @@ func NewSafeAgents() *SafeAgents {
 }
 
 func (this *SafeAgents) Put(req *model.AgentReportRequest) {
+	if req.IP == "" {
+		log.Printf("the ip of %s is empty", req.Hostname)
+		return
+	}
 	val := &model.AgentUpdateInfo{
 		LastUpdate:    time.Now().Unix(),
 		ReportRequest: req,
@@ -57,7 +61,9 @@ func (this *SafeAgents) Put(req *model.AgentReportRequest) {
 		agentInfo.ReportRequest.AgentVersion != req.AgentVersion ||
 		agentInfo.ReportRequest.Hostname != req.Hostname ||
 		agentInfo.ReportRequest.PluginVersion != req.PluginVersion {
-
+		if val.ReportRequest.HostInfo != nil {
+			go cmdb.ReportStatus(val.ReportRequest.HostInfo)
+		}
 		go db.UpdateAgent(val)
 		go db.UpdateCMDBGroup(val)
 	}
@@ -139,8 +145,11 @@ func syncCMDB() {
 		return
 	}
 	for i := 0; i < count; i++ {
-		elem, _ := Agents.Get(keys[i])
-		if elem.ReportRequest.HostInfo != nil {
+		elem, exists := Agents.Get(keys[i])
+		if !exists {
+			continue
+		}
+		if elem.ReportRequest != nil && elem.ReportRequest.HostInfo != nil {
 			elem.ReportRequest.HostInfo["bk_host_name"] = elem.ReportRequest.Hostname
 			cmdb.ReportStatus(elem.ReportRequest.HostInfo)
 
